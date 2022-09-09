@@ -1,2 +1,2 @@
-cmd-client
-test.db
+./cmd-client
+./test.db
