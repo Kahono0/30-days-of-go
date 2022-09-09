@@ -1,4 +1,4 @@
-package main
+package cmd_client
 
 import (
 	"fmt"
@@ -17,7 +17,7 @@ type Record struct {
 	Amount  float64
 }
 
-func main() {
+func Client() {
 	app := &cli.App{
 		Usage: "A simple expense tracker",
 

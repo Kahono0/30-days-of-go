@@ -1,9 +1,9 @@
-module fun/cmd-client
+module github.com/kahno922/30-days-of-go
 
 go 1.18
 
 require (
-	github.com/urfave/cli/v2 v2.14.0
+	github.com/urfave/cli/v2 v2.14.1
 	gorm.io/driver/sqlite v1.3.6
 	gorm.io/gorm v1.23.8
 )
