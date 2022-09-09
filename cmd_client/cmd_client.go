@@ -21,65 +21,7 @@ func Client() {
 	app := &cli.App{
 		Usage: "A simple expense tracker",
 
-		Commands: []*cli.Command{
-			{
-				Name:  "add",
-				Usage: "Add a record of your spending",
-				Flags: []cli.Flag{
-					&cli.StringFlag{
-						Name:     "date",
-						Aliases:  []string{"d"},
-						Usage:    "Date in format YYYY-MM-DD",
-						Required: true,
-					},
-					&cli.StringFlag{
-						Name:     "comment",
-						Aliases:  []string{"c"},
-						Usage:    "Comment (What did you spend money on?)",
-						Required: true,
-					},
-					&cli.Float64Flag{
-						Name:     "amount",
-						Aliases:  []string{"a"},
-						Usage:    "Amount (The amount of money you spent)",
-						Required: true,
-					},
-				},
-				Action: func(c *cli.Context) error {
-					r := Record{
-						Date:    c.String("date"),
-						Comment: c.String("comment"),
-						Amount:  c.Float64("amount"),
-					}
-					fmt.Println(addRecord(r))
-					return nil
-				},
-
-			},
-			{
-				Name:  "get",
-				Usage: "Get records of your spending by date(optional)\nomit date to get all records",
-				Flags: []cli.Flag{
-					&cli.StringFlag{
-						Name:    "date",
-						Aliases: []string{"d"},
-						Usage:   "Date in format YYYY-MM-DD",
-					},
-
-				},
-				Action: func(c *cli.Context) error {
-					date := c.String("date")
-					if date == "" {
-						records := getAllRecords()
-						displayTable(records)
-					} else {
-						records := getRecordByDate(date)
-						displayTable(records)
-					}
-					return nil
-				},
-			},
-		},
+		Commands: []*cli.Command{commands()},
 	}
 
 	if err := app.Run(os.Args); err != nil {
@@ -128,4 +70,79 @@ func displayTable(records []Record) {
 		//print as a table
 		fmt.Printf("%s\t%s\t\t%f\n", record.Date, record.Comment, record.Amount)
 	}
+}
+//commands
+
+func commands() *cli.Command{
+	return &cli.Command{
+		Name:  "add",
+		Usage: "Add a record of your spending",
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:     "date",
+				Aliases:  []string{"d"},
+				Usage:    "Date in format YYYY-MM-DD",
+				Required: true,
+			},
+			&cli.StringFlag{
+				Name:     "comment",
+				Aliases:  []string{"c"},
+				Usage:    "Comment (What did you spend money on?)",
+				Required: true,
+			},
+			&cli.Float64Flag{
+				Name:     "amount",
+				Aliases:  []string{"a"},
+				Usage:    "Amount (The amount of money you spent)",
+				Required: true,
+			},
+		},
+		Action: func(c *cli.Context) error {
+			r := Record{
+				Date:    c.String("date"),
+				Comment: c.String("comment"),
+				Amount:  c.Float64("amount"),
+			}
+			fmt.Println(addRecord(r))
+			return nil
+		},
+
+	}
+}
+
+var getCommand = &cli.Command{
+	Name:  "get",
+	Usage: "Get records of your spending",
+	Subcommands: []*cli.Command{
+		{
+			Name:  "all",
+			Usage: "Get all records",
+			Action: func(c *cli.Context) error {
+				records := getAllRecords()
+				displayTable(records)
+				return nil
+			},
+		},
+		{
+			Name:  "date",
+			Usage: "Get records by date",
+			Flags: []cli.Flag{
+				&cli.StringFlag{
+					Name:     "date",
+					Aliases:  []string{"d"},
+					Usage:    "Date in format YYYY-MM-DD",
+					Required: true,
+				},
+			},
+			Action: func(c *cli.Context) error {
+				records := getRecordByDate(c.String("date"))
+				displayTable(records)
+				return nil
+			}
+		},
+	}
+}
+
+func AddCommand(*cli.Command) {
+	commands().Subcommands = append(commands().Subcommands, getCommand)
 }
