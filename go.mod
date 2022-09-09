@@ -1,4 +1,4 @@
-module github.com/kahno922/30-days-of-go
+module github.com/kahono922/30-days-of-go
 
 go 1.18
 
